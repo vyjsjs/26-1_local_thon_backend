@@ -1,24 +1,27 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+from app.config import ALLOWED_ORIGINS
+from app.routers import stamps, users
 
-# 1. 허락할 프론트엔드 주소 목록 (나중에 Vercel 주소를 여기에 추가합니다)
-origins = [
-    "http://localhost:3000",  # Next.js 로컬 개발
-    "http://localhost:5173",  # Vite 로컬 개발 (레거시)
-]
+app = FastAPI(title="수원 공방거리 스탬프 투어 API")
 
-# 2. CORS 미들웨어 추가 (보안 통과 설정)
+# CORS 미들웨어 (허용 출처는 app/config.py 에서 관리)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"], # GET, POST 등 모든 방식 허용
-    allow_headers=["*"], # 모든 헤더 허용
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# 3. 테스트용 API 만들기
+
+# 연결 테스트용 (기존)
 @app.get("/api/test")
 def test_api():
     return {"message": "백엔드와 성공적으로 연결되었습니다!"}
+
+
+# 라우터 등록
+app.include_router(users.router)
+app.include_router(stamps.router)

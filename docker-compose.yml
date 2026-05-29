@@ -1,0 +1,12 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # .env 의 SUPABASE_URL, SUPABASE_KEY 를 자동으로 읽음
+      # Vercel 배포 URL은 아래 값을 채워 CORS 허용
+      - FRONTEND_ORIGIN=${FRONTEND_ORIGIN:-}
+    restart: unless-stopped
