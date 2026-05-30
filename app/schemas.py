@@ -34,3 +34,9 @@ class StampListResponse(BaseModel):
     stamps: List[StampItem]
     collected_count: int
     total_count: int
+
+
+class StampResetResponse(BaseModel):
+    success: bool
+    user_id: str
+    deleted_count: int

@@ -7,6 +7,7 @@ from app.schemas import (
     StampCollectResponse,
     StampItem,
     StampListResponse,
+    StampResetResponse,
 )
 from app.shops import TOTAL_SHOPS, nfc_to_shop_id
 
@@ -88,4 +89,28 @@ def get_user_stamps(
         stamps=stamps,
         collected_count=len(stamps),
         total_count=TOTAL_SHOPS,
+    )
+
+
+@router.delete("/{user_id}", response_model=StampResetResponse)
+def reset_user_stamps(
+    user_id: str,
+    supabase: Client = Depends(get_supabase),
+):
+    # 안전장치: 데모 사용자(demo- prefix)만 삭제 허용 → 실 사용자 데이터 보호
+    if not user_id.startswith("demo-"):
+        raise HTTPException(
+            status_code=403,
+            detail="데모 사용자(demo-)만 스탬프 초기화가 가능합니다.",
+        )
+
+    res = (
+        supabase.table("stamps")
+        .delete()
+        .eq("user_id", user_id)
+        .execute()
+    )
+    deleted = len(res.data or [])
+    return StampResetResponse(
+        success=True, user_id=user_id, deleted_count=deleted
     )
