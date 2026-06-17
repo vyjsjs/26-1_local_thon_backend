@@ -1,6 +1,6 @@
 from typing import Optional
 
-TOTAL_SHOPS = 14
+TOTAL_SHOPS = 13
 VALID_SHOP_IDS = {f"shop-{i}" for i in range(1, TOTAL_SHOPS + 1)}
 
 
